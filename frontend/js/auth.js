@@ -2,7 +2,10 @@
 // BLOOMORA AUTHENTICATION CONTROLLER
 // ==========================================
 
-const API_BASE_URL = "http://127.0.0.1:8000";
+// Dynamic API URL: Automatically uses live Cloud Backend when hosted online, or localhost when running locally
+const API_BASE_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
+    ? "http://127.0.0.1:8000"
+    : "https://bloomora-api.onrender.com";
 
 window.BloomoraAuth = {
     tokenKey: "bloomora_token",
