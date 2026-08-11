@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bloomora - Aesthetic Visual Pinboard & Spotify Vibe Curator</title>
+    <meta name="description" content="Share your visual aesthetics, match them with your favorite Spotify tunes, and curate a sensory moodboard.">
+    <!-- Google Fonts: Outfit for sleek, modern lettering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Core Styling -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Background Decor Elements -->
+    <div class="bg-glow orange-glow"></div>
+    <div class="bg-glow green-glow"></div>
+    <div class="bg-glow purple-glow"></div>
+
+    <!-- Main Navigation Bar -->
+    <header class="app-header glass">
+        <div class="header-logo" id="headerLogo">
+            <span class="logo-icon"><i class="fa-solid fa-seedling"></i></span>
+            <span class="logo-text">Bloomora</span>
+        </div>
+
+        <!-- Search Section -->
+        <div class="header-search-bar glass-inner">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" id="searchInput" placeholder="Search vibes, tracks, artists...">
+            <button id="clearSearchBtn" class="clear-search-btn"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+
+        <!-- Right Side Nav -->
+        <div class="header-actions">
+            <button id="btnCreatePinOpen" class="btn btn-primary glass-btn hidden"><i class="fa-solid fa-plus"></i> Create</button>
+            
+            <div id="authNavGroup">
+                <button id="btnAuthOpen" class="btn btn-secondary glass-btn"><i class="fa-solid fa-arrow-right-to-bracket"></i> Login</button>
+            </div>
+            
+            <div id="userNavGroup" class="user-nav-group hidden">
+                <button id="btnUserProfile" class="btn-profile glass-btn">
+                    <span class="profile-avatar"><i class="fa-solid fa-user-astronaut"></i></span>
+                    <span id="navUsername" class="profile-name">Guest</span>
+                </button>
+                <button id="btnLogout" class="btn-logout" title="Log Out"><i class="fa-solid fa-power-off"></i></button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Sub-navigation Category Tags -->
+    <nav class="categories-bar">
+        <button class="category-tag active" data-query="">All Vibes</button>
+        <button class="category-tag" data-query="lofi">Lofi Chill</button>
+        <button class="category-tag" data-query="spirited">Anime & Chill</button>
+        <button class="category-tag" data-query="synthwave">Synthwave</button>
+        <button class="category-tag" data-query="forest">Nature Ambient</button>
+        <button class="category-tag" data-query="jazz">Sunday Jazz</button>
+    </nav>
+
+    <!-- Main Board Feed -->
+    <main class="feed-container">
+        <div class="pins-masonry" id="pinsMasonry">
+            <!-- Pins will be rendered here dynamically -->
+            <div class="feed-loading">
+                <div class="spinner"></div>
+                <p>Loading the vibe feed...</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal: Auth (Login & Signup) -->
+    <div id="authModal" class="modal-overlay hidden">
+        <div class="modal-card glass">
+            <button class="modal-close-btn" id="authModalClose"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLoginBtn">Sign In</button>
+                <button class="auth-tab" id="tabSignupBtn">Sign Up</button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <div class="form-group">
+                    <label for="loginUsername"><i class="fa-solid fa-user"></i> Username or Email</label>
+                    <input type="text" id="loginUsername" required placeholder="Enter username/email" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="loginPassword" required placeholder="Enter password" autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn btn-submit">Welcome Back</button>
+            </form>
+
+            <!-- Signup Form -->
+            <form id="signupForm" class="auth-form hidden">
+                <div class="form-group">
+                    <label for="signupUsername"><i class="fa-solid fa-user"></i> Username</label>
+                    <input type="text" id="signupUsername" required placeholder="Create username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="signupEmail"><i class="fa-solid fa-envelope"></i> Email Address</label>
+                    <input type="email" id="signupEmail" required placeholder="Enter email" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="signupPassword"><i class="fa-solid fa-lock"></i> Password</label>
+                    <input type="password" id="signupPassword" required placeholder="Create password" autocomplete="new-password">
+                </div>
+                <button type="submit" class="btn btn-submit">Begin Curating</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Create Pin -->
+    <div id="createPinModal" class="modal-overlay hidden">
+        <div class="modal-card modal-large glass">
+            <button class="modal-close-btn" id="createPinModalClose"><i class="fa-solid fa-xmark"></i></button>
+            <h2 class="modal-title">Share a New Vibe</h2>
+
+            <form id="createPinForm" class="create-pin-grid">
+                <!-- Left Column: Visual Select -->
+                <div class="create-col-left">
+                    <div class="form-group">
+                        <label for="pinImageUrl"><i class="fa-solid fa-image"></i> Pin Image URL</label>
+                        <input type="url" id="pinImageUrl" required placeholder="https://example.com/image.jpg">
+                    </div>
+
+                    <div class="preset-images-section">
+                        <p class="section-label">Or choose a preset aesthetic image:</p>
+                        <div class="preset-images-grid" id="presetImagesGrid">
+                            <!-- Injected preset image tags -->
+                        </div>
+                    </div>
+
+                    <!-- Image Preview Box -->
+                    <div class="image-preview-container glass-inner">
+                        <div id="imagePreviewPlaceholder" class="preview-placeholder">
+                            <i class="fa-solid fa-mountain-sun"></i>
+                            <p>Image Preview</p>
+                        </div>
+                        <img id="imagePreview" src="" alt="Preview" class="hidden">
+                    </div>
+                </div>
+
+                <!-- Right Column: Meta & Spotify -->
+                <div class="create-col-right">
+                    <div class="form-group">
+                        <label for="pinTitle">Title</label>
+                        <input type="text" id="pinTitle" required placeholder="Give your mood a title...">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="pinDescription">Description (Optional)</label>
+                        <textarea id="pinDescription" rows="3" placeholder="Tell us more about the feeling..."></textarea>
+                    </div>
+
+                    <!-- Spotify Track Search Integration -->
+                    <div class="form-group spotify-search-group">
+                        <label for="spotifySearchInput"><i class="fa-brands fa-spotify"></i> Attach Spotify Music</label>
+                        <div class="spotify-search-wrapper">
+                            <input type="text" id="spotifySearchInput" placeholder="Search track or artist...">
+                            <span class="spotify-badge"><i class="fa-brands fa-spotify"></i></span>
+                        </div>
+                        
+                        <!-- Search Results Dropdown -->
+                        <div id="spotifySearchResults" class="spotify-results-dropdown glass hidden">
+                            <!-- Search result rows go here -->
+                        </div>
+
+                        <!-- Selected Spotify Indicator -->
+                        <div id="selectedSpotifyDisplay" class="selected-spotify-display glass-inner hidden">
+                            <img id="selectedSpotifyImg" src="" alt="Album Art">
+                            <div class="selected-info">
+                                <span class="selected-name" id="selectedSpotifyName">Track Name</span>
+                                <span class="selected-artist" id="selectedSpotifyArtist">Artist</span>
+                            </div>
+                            <input type="hidden" id="pinSpotifyUri">
+                            <button type="button" id="btnUnselectSpotify" class="btn-unselect"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-submit-pin">Publish to Bloomora</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Detail View (Expanded Pin & Comments) -->
+    <div id="detailPinModal" class="modal-overlay hidden">
+        <div class="modal-card modal-detail glass">
+            <button class="modal-close-btn" id="detailPinModalClose"><i class="fa-solid fa-xmark"></i></button>
+            
+            <div class="detail-grid">
+                <!-- Left: Full Pin Image -->
+                <div class="detail-image-sec">
+                    <img id="detailPinImage" src="" alt="Pin Detail">
+                </div>
+
+                <!-- Right: Content & Comments & Spotify Player -->
+                <div class="detail-content-sec">
+                    <!-- Pin header / author -->
+                    <div class="detail-header">
+                        <h2 id="detailPinTitle" class="detail-title">Pin Title</h2>
+                        <div class="detail-author-row">
+                            <span class="detail-avatar"><i class="fa-solid fa-user-astronaut"></i></span>
+                            <div>
+                                <div id="detailPinAuthor" class="detail-author">Username</div>
+                                <div id="detailPinDate" class="detail-date">July 21, 2026</div>
+                            </div>
+                            <!-- Delete button (visible if current user is owner) -->
+                            <button id="btnDeletePin" class="btn-delete-pin hidden" title="Delete Pin"><i class="fa-solid fa-trash-can"></i></button>
+                        </div>
+                    </div>
+
+                    <!-- Description -->
+                    <p id="detailPinDesc" class="detail-description">Pin description goes here...</p>
+
+                    <!-- Spotify Player Widget Container -->
+                    <div id="detailSpotifyContainer" class="detail-spotify-container">
+                        <!-- Spotify iframe widget injected here -->
+                    </div>
+
+                    <!-- Comments Section -->
+                    <div class="detail-comments-section">
+                        <h3>Comments (<span id="detailCommentsCount">0</span>)</h3>
+                        <div class="comments-list" id="commentsList">
+                            <!-- Comment items rendered dynamically -->
+                        </div>
+
+                        <!-- Add Comment form -->
+                        <form id="commentForm" class="comment-form-row">
+                            <input type="text" id="commentInput" required placeholder="Share your vibe..." disabled>
+                            <button type="submit" class="btn-send-comment" id="btnSendComment" disabled title="Login to comment"><i class="fa-solid fa-paper-plane"></i></button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- JS Scripts -->
+    <script src="js/auth.js"></script>
+    <script src="js/spotify.js"></script>
+    <script src="js/pins.js"></script>
+    <script src="js/comments.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>

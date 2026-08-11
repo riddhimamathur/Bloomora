@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+ENV/
+env/
+.env
+
+# Database
+*.sqlite
+*.db
+
+# Frontend / Node
+node_modules/
+.DS_Store
+
+# OS local
+Thumbs.db
+desktop.ini
