@@ -131,18 +131,33 @@ window.BloomoraPins = {
         }
     ],
 
-    async fetchPins(searchQuery = "") {
+    async fetchPins(searchQuery = "", categoryQuery = "") {
         try {
-            let url = `${API_BASE_URL}/pins/`;
-            if (searchQuery) {
-                url += `?search=${encodeURIComponent(searchQuery)}`;
-            }
+            let url = `${API_BASE_URL}/vibes`;
+            const params = new URLSearchParams();
+            if (searchQuery) params.append("search", searchQuery);
+            if (categoryQuery && categoryQuery !== "All Vibes") params.append("category", categoryQuery);
+            if (params.toString()) url += `?${params.toString()}`;
             
             let pins = [];
             try {
                 const response = await fetch(url);
                 if (response.ok) {
-                    pins = await response.json();
+                    const result = await response.json();
+                    // Supports both Express pagination wrapper ({ data: [...] }) and array
+                    const rawData = Array.isArray(result) ? result : (result.data || []);
+                    
+                    pins = rawData.map(item => ({
+                        id: item.id,
+                        title: item.title,
+                        description: item.mood || item.category || "Aesthetic vibe playlist",
+                        image_url: item.cover_image_url || item.image_url,
+                        spotify_uri: item.tracks?.[0]?.spotify_track_id ? `spotify:track:${item.tracks[0].spotify_track_id}` : (item.spotify_uri || "spotify:track:7ouOz24K6C4Vl4x2L717S1"),
+                        user_id: item.creator?.id || 1,
+                        owner: { username: item.creator?.display_name || item.owner?.username || "curator" },
+                        tracks: item.tracks || [],
+                        created_at: item.created_at || new Date().toISOString()
+                    }));
                 }
             } catch (err) {
                 console.warn("Backend API fetch pending, loading curated fallback pins", err);

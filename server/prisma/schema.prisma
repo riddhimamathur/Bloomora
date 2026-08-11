@@ -1,0 +1,86 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String   @id @default(uuid())
+  email         String   @unique
+  password_hash String
+  display_name  String
+  avatar        String?
+  created_at    DateTime @default(now())
+
+  vibes     Vibe[]
+  likes     Like[]
+  followers Follow[] @relation("following")
+  following Follow[] @relation("follower")
+}
+
+model Vibe {
+  id              String   @id @default(uuid())
+  title           String
+  category        String
+  cover_image_url String
+  mood            String?
+  created_by      String
+  created_at      DateTime @default(now())
+
+  creator     User        @relation(fields: [created_by], references: [id], onDelete: Cascade)
+  vibe_tracks VibeTrack[]
+  likes       Like[]
+}
+
+model Track {
+  id               String   @id @default(uuid())
+  title            String
+  artist           String
+  album            String?
+  duration_ms      Int?
+  spotify_track_id String   @unique
+  preview_url      String?
+  cover_art_url    String?
+  created_at       DateTime @default(now())
+
+  vibe_tracks VibeTrack[]
+}
+
+model VibeTrack {
+  id       String @id @default(uuid())
+  vibe_id  String
+  track_id String
+  position Int    @default(0)
+
+  vibe  Vibe  @relation(fields: [vibe_id], references: [id], onDelete: Cascade)
+  track Track @relation(fields: [track_id], references: [id], onDelete: Cascade)
+
+  @@unique([vibe_id, track_id])
+}
+
+model Like {
+  user_id  String
+  vibe_id  String
+  created_at DateTime @default(now())
+
+  user User @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  vibe Vibe @relation(fields: [vibe_id], references: [id], onDelete: Cascade)
+
+  @@id([user_id, vibe_id])
+}
+
+model Follow {
+  follower_id  String
+  following_id String
+  created_at   DateTime @default(now())
+
+  follower  User @relation("follower", fields: [follower_id], references: [id], onDelete: Cascade)
+  following User @relation("following", fields: [following_id], references: [id], onDelete: Cascade)
+
+  @@id([follower_id, following_id])
+}

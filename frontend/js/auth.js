@@ -2,10 +2,10 @@
 // BLOOMORA AUTHENTICATION CONTROLLER
 // ==========================================
 
-// Dynamic API URL: Automatically uses live Cloud Backend when hosted online, or localhost when running locally
+// Dynamic API URL: Connects to Node.js/Express Backend on port 5000 locally or live service
 const API_BASE_URL = (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")
-    ? "http://127.0.0.1:8000"
-    : "https://bloomora-api.onrender.com";
+    ? "http://localhost:5000/api"
+    : "https://bloomora-api.onrender.com/api";
 
 window.BloomoraAuth = {
     tokenKey: "bloomora_token",
