@@ -47,16 +47,110 @@ window.BloomoraPins = {
         ]
     },
 
+    // Default pins list to populate the feed automatically
+    defaultFeedPins: [
+        {
+            id: "default_1",
+            title: "Sleek Night Porsche Cruise",
+            description: "Late night city drives with synthwave rhythms and glowing taillights.",
+            image_url: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:0U0ld9An0v4vYmBKGwwh8x",
+            user_id: 1,
+            owner: { username: "drive_enthusiast" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_2",
+            title: "Morning Matcha & Lo-Fi",
+            description: "Starting the day with warm tea, soft sun rays, and soothing bedroom beats.",
+            image_url: "https://images.unsplash.com/photo-1511920170033-f8396924c348?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:7ouOz24K6C4Vl4x2L717S1",
+            user_id: 1,
+            owner: { username: "bloom_curator" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_3",
+            title: "Red Supercar Speed Demon",
+            description: "High octane highway racing, eurobeat vibes, and pure adrenaline.",
+            image_url: "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:1E2B7qJ968QJ0zV0N0n0N0",
+            user_id: 1,
+            owner: { username: "track_master" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_4",
+            title: "Studio Ghibli Nostalgia",
+            description: "Lost in the gorgeous hand-drawn animations and piano melodies of Joe Hisaishi.",
+            image_url: "https://images.unsplash.com/photo-1507838153414-b4b713384a76?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:45K50M5qAexWkXmD55e8c1",
+            user_id: 1,
+            owner: { username: "anime_soul" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_5",
+            title: "Late Night Synthwave Drive",
+            description: "Obsessed with neon glows, gridlines, retro-futuristic basslines, and 80s nostalgia.",
+            image_url: "https://images.unsplash.com/photo-1519608487953-e999c86e7455?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:3nV75lXF6wU1fXb60a5eE7",
+            user_id: 1,
+            owner: { username: "synth_rider" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_6",
+            title: "Secret Forest Escape",
+            description: "Finding peace in the deep green forest canopy. Pure ambient tracks to connect with nature.",
+            image_url: "https://images.unsplash.com/photo-1518818419601-72c8673f5852?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:1m032WgU12z8P6n8q4Y8Kq",
+            user_id: 1,
+            owner: { username: "nature_lover" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_7",
+            title: "Rainy Sunday Jazz",
+            description: "Soft keys, warm double bass, and rain drops tapping on the window pane.",
+            image_url: "https://images.unsplash.com/photo-1534224039826-c7a0dea0e66a?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:27D169EbuiW277Y4Z5ZldF",
+            user_id: 1,
+            owner: { username: "cafe_vibes" },
+            created_at: new Date().toISOString()
+        },
+        {
+            id: "default_8",
+            title: "Sunset Coastal Highway",
+            description: "Cruising down Pacific Coast Highway at golden hour with open windows.",
+            image_url: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&auto=format&fit=crop",
+            spotify_uri: "spotify:track:3n3Ppam7vgaVa1iaRUc9Lp",
+            user_id: 1,
+            owner: { username: "coastal_rider" },
+            created_at: new Date().toISOString()
+        }
+    ],
+
     async fetchPins(searchQuery = "") {
         try {
             let url = `${API_BASE_URL}/pins/`;
             if (searchQuery) {
                 url += `?search=${encodeURIComponent(searchQuery)}`;
             }
-            const response = await fetch(url);
+            
             let pins = [];
-            if (response.ok) {
-                pins = await response.json();
+            try {
+                const response = await fetch(url);
+                if (response.ok) {
+                    pins = await response.json();
+                }
+            } catch (err) {
+                console.warn("Backend API fetch pending, loading curated fallback pins", err);
+            }
+
+            // If home feed (no search query) and backend returned empty list, show full default feed!
+            if (!searchQuery && (!pins || pins.length === 0)) {
+                return this.defaultFeedPins;
             }
 
             // DYNAMIC ACCURATE SEARCH MATCHING
@@ -84,9 +178,8 @@ window.BloomoraPins = {
                         created_at: new Date().toISOString()
                     }));
                     pins = [...formatted, ...pins];
-                } else if (pins.length === 0) {
+                } else if (!pins || pins.length === 0) {
                     // 2. Dynamic high-precision image & music generator for ANY search query
-                    // Uses reliable static Unsplash topic photos based on search intent
                     const keywordsMap = {
                         car: "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=800&auto=format&fit=crop",
                         drive: "https://images.unsplash.com/photo-1492144534655-ae79c964c9d7?w=800&auto=format&fit=crop",
@@ -122,7 +215,7 @@ window.BloomoraPins = {
             return pins;
         } catch (error) {
             console.error("Fetch Pins Error:", error);
-            return [];
+            return this.defaultFeedPins;
         }
     },
 
