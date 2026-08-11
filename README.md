@@ -1,6 +1,7 @@
 # Bloomora 🌸
 
-> **Live Demo / Website**: [https://riddhimamathur.github.io/Bloomora/](https://riddhimamathur.github.io/Bloomora/) (or your deployed Vercel / Render link)
+> **Live Website / Frontend**: [https://riddhimamathur.github.io/Bloomora/](https://riddhimamathur.github.io/Bloomora/)  
+> **Backend API**: [https://github.com/riddhimamathur/Bloomora/tree/main/backend](https://github.com/riddhimamathur/Bloomora/tree/main/backend) | Local API Docs: `http://127.0.0.1:8000/docs`
 
 Bloomora is an aesthetic, visual pinboard web application with seamless Spotify integration. Users can log in, discover and post pins featuring beautiful artwork or photos, attach a Spotify track or playlist to a pin, view pins in a masonry grid, play attached tracks via embedded Spotify players, and write comments.
 
